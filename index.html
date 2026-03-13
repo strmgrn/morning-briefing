@@ -7,110 +7,62 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   :root {
-    --bg: #0f1117;
-    --bg2: #181c27;
-    --bg3: #1e2333;
-    --border: #2a2f42;
-    --text: #e8eaf0;
-    --text2: #8b90a4;
-    --text3: #555b70;
-    --accent: #4f7ef8;
-    --green: #34c97a;
-    --red: #f05252;
-    --orange: #f5a623;
-    --red-bg: #2a1a1a;
-    --red-border: #4a2020;
-    --green-bg: #0d2018;
-    --blue-bg: #0d1a30;
-    --radius: 12px;
-    --radius-sm: 8px;
+    --bg: #0f1117; --bg2: #181c27; --bg3: #1e2333; --border: #2a2f42;
+    --text: #e8eaf0; --text2: #8b90a4; --text3: #555b70;
+    --accent: #4f7ef8; --green: #34c97a; --red: #f05252; --orange: #f5a623;
+    --red-bg: #2a1a1a; --red-border: #4a2020; --green-bg: #0d2018; --blue-bg: #0d1a30;
+    --radius: 12px; --radius-sm: 8px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 24px 20px 48px;
-  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px 20px 48px; }
   a { color: inherit; text-decoration: none; }
   a:hover { opacity: 0.8; }
 
   .header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
   .header h1 { font-size: 22px; font-weight: 600; }
   .header .date { font-size: 13px; color: var(--text2); }
-  .header .refresh { margin-left: auto; font-size: 12px; color: var(--text3); cursor: pointer; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: none; color: var(--text2); }
+  .header .meta { margin-left: auto; font-size: 11px; color: var(--text3); }
+  .header .refresh { font-size: 12px; cursor: pointer; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: none; color: var(--text2); }
   .header .refresh:hover { background: var(--bg3); }
 
-  /* Action card */
-  .action-card {
-    background: var(--red-bg);
-    border: 1px solid var(--red-border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    margin-bottom: 12px;
-  }
-  .section-label {
-    font-size: 10px; font-weight: 600; letter-spacing: .08em;
-    text-transform: uppercase; margin-bottom: 10px;
-  }
+  #error-state { display: none; background: var(--red-bg); border: 1px solid var(--red-border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; font-size: 13px; color: var(--red); }
+  #stale-banner { display: none; background: #2a1e0d; border: 1px solid #4a3010; border-radius: var(--radius); padding: 10px 16px; margin-bottom: 12px; font-size: 12px; color: var(--orange); }
+
+  .action-card { background: var(--red-bg); border: 1px solid var(--red-border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; }
+  .section-label { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px; }
   .action-card .section-label { color: var(--red); }
-  .action-item {
-    display: flex; align-items: flex-start; gap: 10px;
-    padding: 7px 0; border-bottom: 1px solid var(--red-border);
-  }
+  .action-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--red-border); }
   .action-item:last-child { border-bottom: none; padding-bottom: 0; }
   .action-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); flex-shrink: 0; margin-top: 5px; }
   .action-text { font-size: 13px; line-height: 1.45; }
   .action-meta { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .no-actions { font-size: 13px; color: var(--green); }
 
-  /* Grid layouts */
   .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   @media (max-width: 900px) { .grid3 { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 600px) { .grid3, .grid2 { grid-template-columns: 1fr; } }
 
-  /* Card */
-  .card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-  }
-  .card-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 10px;
-  }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   .card-header .section-label { color: var(--text2); margin-bottom: 0; }
-  .badge {
-    font-size: 10px; font-weight: 600; padding: 2px 8px;
-    border-radius: 99px; white-space: nowrap;
-  }
+  .badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
   .badge-red { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
   .badge-orange { background: #2a1e0d; color: var(--orange); border: 1px solid #4a3010; }
   .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid #1a4030; }
   .badge-blue { background: var(--blue-bg); color: var(--accent); border: 1px solid #1a2a50; }
   .badge-gray { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
 
-  /* Row items */
-  .row {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    padding: 6px 0; border-bottom: 1px solid var(--border); gap: 8px;
-    cursor: pointer; border-radius: 4px; transition: background .12s;
-  }
+  .row { display: flex; justify-content: space-between; align-items: flex-start; padding: 6px 0; border-bottom: 1px solid var(--border); gap: 8px; cursor: pointer; border-radius: 4px; transition: background .12s; }
   .row:last-child { border-bottom: none; padding-bottom: 0; }
   .row:hover { background: var(--bg3); margin: 0 -4px; padding-left: 4px; padding-right: 4px; }
   .row-label { font-size: 13px; line-height: 1.4; flex: 1; }
   .row-label.bold { font-weight: 500; }
   .row-meta { font-size: 11px; color: var(--text2); white-space: nowrap; }
   .row-meta.danger { color: var(--red); }
+  .empty-row { font-size: 13px; color: var(--text3); padding: 4px 0; }
 
-  /* Calendar events */
-  .cal-item {
-    display: flex; align-items: flex-start; gap: 10px;
-    padding: 5px 4px; border-bottom: 1px solid var(--border);
-    border-radius: 4px; transition: background .12s; cursor: pointer;
-  }
+  .cal-item { display: flex; align-items: flex-start; gap: 10px; padding: 5px 4px; border-bottom: 1px solid var(--border); border-radius: 4px; transition: background .12s; cursor: pointer; }
   .cal-item:last-child { border-bottom: none; }
   .cal-item:hover { background: var(--bg3); }
   .cal-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
@@ -119,100 +71,64 @@
   .cal-name { font-size: 13px; line-height: 1.4; }
   .cal-name.cancelled { text-decoration: line-through; color: var(--text2); }
   .cal-time { font-size: 11px; color: var(--text2); margin-top: 1px; }
-  .teams-badge {
-    font-size: 10px; padding: 1px 5px; border-radius: 4px;
-    background: #1a2a50; color: var(--accent); margin-left: 6px;
-    vertical-align: middle;
-  }
+  .teams-badge { font-size: 10px; padding: 1px 5px; border-radius: 4px; background: #1a2a50; color: var(--accent); margin-left: 6px; vertical-align: middle; }
   .legend { display: flex; gap: 14px; margin-bottom: 10px; }
   .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); }
 
-  /* Metrics row */
   .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
   .metric { background: var(--bg3); border-radius: var(--radius-sm); padding: 10px 12px; }
   .metric-label { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
   .metric-value { font-size: 22px; font-weight: 600; }
   .metric-value.green { color: var(--green); }
+  .metric-value.red { color: var(--red); }
+  .metric-value.orange { color: var(--orange); }
 
-  /* SLA bar */
   .sla-bar-bg { height: 5px; background: var(--bg3); border-radius: 99px; margin-top: 6px; }
   .sla-bar-fill { height: 5px; border-radius: 99px; background: var(--green); }
+  .sla-bar-fill.warn { background: var(--orange); }
+  .sla-bar-fill.danger { background: var(--red); }
 
-  /* TickTick */
   .tt-section-label { font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; margin: 10px 0 4px; }
   .tt-section-label.overdue { color: var(--red); }
   .tt-section-label.today { color: var(--text); margin-top: 12px; }
   .tt-section-label.inbox { color: var(--text2); margin-top: 12px; }
-  .tt-item {
-    display: flex; align-items: flex-start; gap: 9px;
-    padding: 5px 4px; border-bottom: 1px solid var(--border);
-    cursor: pointer; border-radius: 4px; transition: background .12s;
-  }
+  .tt-item { display: flex; align-items: flex-start; gap: 9px; padding: 5px 4px; border-bottom: 1px solid var(--border); cursor: pointer; border-radius: 4px; transition: background .12s; }
   .tt-item:last-child { border-bottom: none; }
   .tt-item:hover { background: var(--bg3); }
-  .tt-circle {
-    width: 14px; height: 14px; border-radius: 50%;
-    border: 1.5px solid var(--border); flex-shrink: 0; margin-top: 2px;
-  }
+  .tt-circle { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--border); flex-shrink: 0; margin-top: 2px; }
   .tt-circle.overdue { border-color: var(--red); }
   .tt-text { font-size: 13px; line-height: 1.4; }
   .tt-meta { font-size: 11px; color: var(--text2); margin-top: 1px; }
   .tt-meta.danger { color: var(--red); }
 
-  /* 7-day private calendar */
   .wk-day { margin-bottom: 4px; }
   .wk-header { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; padding: 0 2px; }
   .wk-date-label { font-size: 11px; font-weight: 600; color: var(--text2); min-width: 82px; }
   .wk-date-label.today { color: var(--accent); }
   .wk-events-col { padding-left: 90px; }
-  .wk-event {
-    font-size: 12px; line-height: 1.4; padding: 3px 4px;
-    border-bottom: 1px solid var(--border); color: var(--text);
-    cursor: pointer; border-radius: 4px; transition: background .12s;
-  }
+  .wk-event { font-size: 12px; line-height: 1.4; padding: 3px 4px; border-bottom: 1px solid var(--border); color: var(--text); cursor: pointer; border-radius: 4px; transition: background .12s; }
   .wk-event:last-child { border-bottom: none; }
   .wk-event:hover { background: var(--bg3); }
   .wk-event-time { font-size: 11px; color: var(--text2); margin-right: 5px; }
   .wk-empty { font-size: 12px; color: var(--text3); padding: 2px 0 4px 90px; }
   .wk-divider { border: none; border-top: 1px solid var(--border); margin: 5px 0; }
 
-  /* Right col stacking */
   .right-col { display: flex; flex-direction: column; gap: 10px; }
 
-  /* Outlook deep link open-in-app */
-  .open-link { font-size: 10px; color: var(--accent); margin-left: 6px; opacity: 0.7; }
-
-  /* Auth overlay */
-  #auth-overlay {
-    position: fixed; inset: 0; z-index: 9999;
-    background: var(--bg);
-    display: flex; align-items: center; justify-content: center;
-  }
-  #auth-box {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 40px 48px;
-    text-align: center;
-    max-width: 360px;
-    width: 90%;
-  }
+  #auth-overlay { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; }
+  #auth-box { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px 48px; text-align: center; max-width: 360px; width: 90%; }
   #auth-box h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
   #auth-box p { font-size: 13px; color: var(--text2); margin-bottom: 28px; }
   #auth-denied { display: none; }
   #auth-denied p { color: var(--red); margin-bottom: 16px; }
-  #auth-denied button {
-    font-size: 12px; color: var(--text2); background: none;
-    border: 1px solid var(--border); border-radius: 6px;
-    padding: 6px 14px; cursor: pointer;
-  }
+  #auth-denied button { font-size: 12px; color: var(--text2); background: none; border: 1px solid var(--border); border-radius: 6px; padding: 6px 14px; cursor: pointer; }
   #auth-denied button:hover { background: var(--bg3); }
   #main-content { display: none; }
+  #loading-state { display: flex; align-items: center; justify-content: center; min-height: 200px; font-size: 13px; color: var(--text3); }
 </style>
 </head>
 <body>
 
-<!-- AUTH OVERLAY -->
 <div id="auth-overlay">
   <div id="auth-box">
     <div id="auth-signin">
@@ -225,12 +141,8 @@
         data-itp_support="true">
       </div>
       <div class="g_id_signin"
-        data-type="standard"
-        data-shape="rectangular"
-        data-theme="filled_black"
-        data-text="sign_in_with"
-        data-size="large"
-        data-logo_alignment="left">
+        data-type="standard" data-shape="rectangular" data-theme="filled_black"
+        data-text="sign_in_with" data-size="large" data-logo_alignment="left">
       </div>
     </div>
     <div id="auth-denied">
@@ -241,465 +153,176 @@
   </div>
 </div>
 
-<!-- MAIN CONTENT -->
 <div id="main-content">
-
-<div class="header">
-  <h1>Morning Briefing</h1>
-  <span class="date">Friday 13 March 2026</span>
-  <button class="refresh" onclick="window.location.reload()">↻ Refresh</button>
+  <div id="stale-banner">Data is from a previous session — say "god morgon" to Claude to refresh.</div>
+  <div id="error-state">Could not load briefing data. Try refreshing.</div>
+  <div class="header">
+    <h1>Morning Briefing</h1>
+    <span class="date" id="hdr-date"></span>
+    <span class="meta" id="hdr-generated"></span>
+    <button class="refresh" onclick="loadData()">↻ Refresh</button>
+  </div>
+  <div id="dashboard-body"><div id="loading-state">Loading briefing data…</div></div>
 </div>
-
-<!-- ACTION REQUIRED -->
-<div class="action-card">
-  <div class="section-label">Action required</div>
-
-  <div class="action-item">
-    <div class="action-dot"></div>
-    <div>
-      <a href="https://outlook.cloud.microsoft/mail/inbox" target="_blank">
-        <div class="action-text">Johan Olofsson — 2 Naviq cases closed while OOO (RQT3558230, RQT3558231). Reply + escalate IT support routine.</div>
-        <div class="action-meta">NCC Outlook · 09:36 · draft reply ready</div>
-      </a>
-    </div>
-  </div>
-
-  <div class="action-item">
-    <div class="action-dot"></div>
-    <div>
-      <a href="https://mail.google.com/mail/u/1/#inbox" target="_blank">
-        <div class="action-text">Power Branch — Google Workspace invoice rejected by Wint: wrong format, missing billing address.</div>
-        <div class="action-meta">cs@powerbranch.se · 08:23</div>
-      </a>
-    </div>
-  </div>
-
-  <div class="action-item">
-    <div class="action-dot"></div>
-    <div>
-      <a href="https://mail.google.com/mail/u/0/#inbox" target="_blank">
-        <div class="action-text">Wint — INPUT Consulting overdue invoice: 148,400 kr since 28 Feb.</div>
-        <div class="action-meta">christoffer.stromgren@gmail.com · 07:28</div>
-      </a>
-    </div>
-  </div>
-
-  <div class="action-item">
-    <div class="action-dot"></div>
-    <div>
-      <a href="https://ticktick.com/webapp/#q/today/tasks" target="_blank">
-        <div class="action-text">TickTick overdue — Flytta möten (se Mathias svar, månd mötet och kanske något mer).</div>
-        <div class="action-meta">Due Mar 11 · still open</div>
-      </a>
-    </div>
-  </div>
-</div>
-
-<!-- EMAIL ROW -->
-<div class="grid3" style="margin-bottom:10px">
-
-  <!-- Gmail personal -->
-  <div class="card">
-    <div class="card-header">
-      <span class="section-label">Gmail personal</span>
-      <span class="badge badge-orange">2 items</span>
-    </div>
-    <a href="https://mail.google.com/mail/u/0/#inbox" target="_blank">
-      <div class="row">
-        <span class="row-label">Wint — INPUT Consulting 148,400 kr overdue</span>
-        <span class="row-meta danger">Due 28 Feb</span>
-      </div>
-    </a>
-    <a href="https://mail.google.com/mail/u/0/#inbox" target="_blank">
-      <div class="row">
-        <span class="row-label">Flekkerøy Skole — 2 new docs (Presisering + UKE 12)</span>
-        <span class="row-meta">Today</span>
-      </div>
-    </a>
-    <a href="https://mail.google.com/mail/u/0/#inbox" target="_blank">
-      <div class="row">
-        <span class="row-label">Airbnb booking reminder</span>
-        <span class="row-meta">20 Mar</span>
-      </div>
-    </a>
-  </div>
-
-  <!-- Power Branch -->
-  <div class="card">
-    <div class="card-header">
-      <span class="section-label">Power Branch</span>
-      <span class="badge badge-red">1 action</span>
-    </div>
-    <a href="https://mail.google.com/mail/u/1/#inbox" target="_blank">
-      <div class="row">
-        <span class="row-label bold">Invoice rejected by Wint — wrong format + missing address</span>
-        <span class="row-meta">08:23</span>
-      </div>
-    </a>
-    <a href="https://mail.google.com/mail/u/1/#inbox" target="_blank">
-      <div class="row">
-        <span class="row-label">GitHub Enterprise Trial nudge</span>
-        <span class="row-meta">09:12</span>
-      </div>
-    </a>
-  </div>
-
-  <!-- NCC Outlook -->
-  <div class="card">
-    <div class="card-header">
-      <span class="section-label">NCC Outlook</span>
-      <span class="badge badge-red">3 unread</span>
-    </div>
-    <a href="https://outlook.cloud.microsoft/mail/inbox" target="_blank">
-      <div class="row">
-        <span class="row-label bold">Johan Olofsson — Open cases again!</span>
-        <span class="row-meta danger">Flagged</span>
-      </div>
-    </a>
-    <a href="https://outlook.cloud.microsoft/mail/inbox" target="_blank">
-      <div class="row">
-        <span class="row-label">Hovi Jori — Security incident Sweden (FYI)</span>
-        <span class="row-meta">09:01</span>
-      </div>
-    </a>
-    <a href="https://outlook.cloud.microsoft/mail/inbox" target="_blank">
-      <div class="row">
-        <span class="row-label">Mattias Lafvas — Heta arbeten checklist</span>
-        <span class="row-meta">08:43</span>
-      </div>
-    </a>
-    <a href="https://outlook.cloud.microsoft/mail/inbox" target="_blank">
-      <div class="row">
-        <span class="row-label">Faisal Al-Wehliye — NCC Field roles update</span>
-        <span class="row-meta">08:38</span>
-      </div>
-    </a>
-  </div>
-
-</div>
-
-<!-- MAIN 2-COL -->
-<div class="grid2">
-
-  <!-- NCC Calendar today -->
-  <div class="card">
-    <div class="card-header">
-      <span class="section-label">NCC Calendar — today</span>
-      <span class="badge badge-blue">13 events</span>
-    </div>
-    <div class="legend">
-      <div class="legend-item"><div class="cal-dot dot-ncc"></div>NCC</div>
-      <div class="legend-item"><div class="cal-dot dot-priv"></div>Personal</div>
-    </div>
-
-    <a href="https://outlook.cloud.microsoft/calendar/view/day" target="_blank">
-      <div class="cal-item">
-        <div class="cal-dot dot-ncc"></div>
-        <div><div class="cal-name">Release Rendra (reminder)</div><div class="cal-time">08:00 – 08:25</div></div>
-      </div>
-    </a>
-    <a href="https://outlook.cloud.microsoft/calendar/view/day" target="_blank">
-      <div class="cal-item">
-        <div class="cal-dot dot-ncc"></div>
-        <div><div class="cal-name">unam ncc field q2 plan</div><div class="cal-time">09:00 – 09:25</div></div>
-      </div>
-    </a>
-    <a href="https://outlook.cloud.microsoft/calendar/view/day" target="_blank">
-      <div class="cal-item">
-        <div class="cal-dot dot-ncc"></div>
-        <div><div class="cal-name">Virtual/Live team fika — Keskinen Matias</div><div class="cal-time">09:30 – 10:00</div></div>
-      </div>
-    </a>
-    <a href="https://outlook.cloud.microsoft/calendar/view/day" target="_blank">
-      <div class="cal-item">
-        <div class="cal-dot dot-ncc"></div>
-        <div>
-          <div class="cal-name">Superuser Forum & Operational meeting QLM/Polaris <span class="teams-badge">Teams</span></div>
-          <div class="cal-time">10:00 – 10:30 · Garcia Hagman Susanna</div>
-        </div>
-      </div>
-    </a>
-    <a href="https://outlook.cloud.microsoft/calendar/view/day" target="_blank">
-      <div class="cal-item">
-        <div class="cal-dot dot-ncc"></div>
-        <div><div class="cal-name cancelled">Info: End of Life apps in ServiceNow (cancelled)</div><div class="cal-time">10:00 – 10:45</div></div>
-      </div>
-    </a>
-    <a href="https://outlook.cloud.microsoft/calendar/view/day" target="_blank">
-      <div class="cal-item">
-        <div class="cal-dot dot-ncc"></div>
-        <div>
-          <div class="cal-name">Snabb avstämning — Mathias Hellqvist <span class="teams-badge">Teams</span></div>
-          <div class="cal-time">10:45 – 11:00</div>
-        </div>
-      </div>
-    </a>
-    <a href="https://outlook.cloud.microsoft/calendar/view/day" target="_blank">
-      <div class="cal-item">
-        <div class="cal-dot dot-ncc"></div>
-        <div>
-          <div class="cal-name">Genomgång Fråga-Svar Infra — Villén Andreas <span class="teams-badge">Teams</span></div>
-          <div class="cal-time">11:00 – 11:50</div>
-        </div>
-      </div>
-    </a>
-    <a href="https://outlook.cloud.microsoft/calendar/view/day" target="_blank">
-      <div class="cal-item">
-        <div class="cal-dot dot-ncc"></div>
-        <div><div class="cal-name">Lunch & fokustid <span class="teams-badge">Teams</span></div><div class="cal-time">11:30 – 13:00</div></div>
-      </div>
-    </a>
-    <a href="https://outlook.cloud.microsoft/calendar/view/day" target="_blank">
-      <div class="cal-item">
-        <div class="cal-dot dot-ncc"></div>
-        <div><div class="cal-name">Blodprov</div><div class="cal-time">12:00 – 12:50</div></div>
-      </div>
-    </a>
-    <a href="https://outlook.cloud.microsoft/calendar/view/day" target="_blank">
-      <div class="cal-item">
-        <div class="cal-dot dot-ncc"></div>
-        <div>
-          <div class="cal-name">NCC Field — Olsson Gustav <span class="teams-badge">Teams</span></div>
-          <div class="cal-time">13:30 – 14:00</div>
-        </div>
-      </div>
-    </a>
-    <a href="https://outlook.cloud.microsoft/calendar/view/day" target="_blank">
-      <div class="cal-item">
-        <div class="cal-dot dot-ncc"></div>
-        <div>
-          <div class="cal-name">Fika/kunskapsdelning NCC Field Teamet <span class="teams-badge">Teams</span></div>
-          <div class="cal-time">14:00 – 14:25</div>
-        </div>
-      </div>
-    </a>
-    <a href="https://outlook.cloud.microsoft/calendar/view/day" target="_blank">
-      <div class="cal-item">
-        <div class="cal-dot dot-ncc"></div>
-        <div>
-          <div class="cal-name">Arbetsberedningar — Olsson Gustav <span class="teams-badge">Teams</span></div>
-          <div class="cal-time">14:30 – 15:00</div>
-        </div>
-      </div>
-    </a>
-    <a href="https://outlook.cloud.microsoft/calendar/view/day" target="_blank">
-      <div class="cal-item">
-        <div class="cal-dot dot-ncc"></div>
-        <div><div class="cal-name">KPI SCC Naviq Report (reminder)</div><div class="cal-time">15:00 – 15:50</div></div>
-      </div>
-    </a>
-    <a href="https://calendar.google.com/calendar/u/0/r/day" target="_blank">
-      <div class="cal-item">
-        <div class="cal-dot dot-priv"></div>
-        <div><div class="cal-name">Gaming med fillä</div><div class="cal-time">19:00 – 23:00</div></div>
-      </div>
-    </a>
-  </div>
-
-  <!-- RIGHT COLUMN -->
-  <div class="right-col">
-
-    <!-- ServiceNow -->
-    <div class="card">
-      <div class="card-header">
-        <span class="section-label">ServiceNow</span>
-        <a href="https://nccprod.service-now.com/now/nav/ui/classic/params/target/%24pa_dashboard.do%3Fsysparm_dashboard%3D9cb3250ddba870502b985ca5f396193b" target="_blank" style="font-size:11px;color:var(--accent)">Open dashboard ↗</a>
-      </div>
-      <div class="metrics">
-        <div class="metric"><div class="metric-label">High priority</div><div class="metric-value green">0</div></div>
-        <div class="metric"><div class="metric-label">Escalated</div><div class="metric-value green">0</div></div>
-        <div class="metric"><div class="metric-label">SLA &lt;6h</div><div class="metric-value green">0</div></div>
-      </div>
-      <div class="card-header" style="margin-bottom:6px">
-        <span class="section-label" style="margin-bottom:0">Open SLA</span>
-        <span class="badge badge-orange">1 ticket</span>
-      </div>
-      <a href="https://nccprod.service-now.com/sc_task.do?sysparm_query=number%3DRQT3557243" target="_blank">
-        <div class="row" style="flex-direction:column;gap:4px">
-          <span style="font-size:12px;font-weight:600;color:var(--accent)">RQT3557243</span>
-          <span class="row-label">Create Azure Function App</span>
-          <span style="font-size:11px;color:var(--text2)">Awaiting User Info · Mahesh Chenukunuru</span>
-          <div class="sla-bar-bg" style="width:100%"><div class="sla-bar-fill" style="width:16%"></div></div>
-          <span style="font-size:11px;color:var(--text2)">16% elapsed · 20h left</span>
-        </div>
-      </a>
-      <div class="card-header" style="margin-top:12px;margin-bottom:4px">
-        <span class="section-label" style="margin-bottom:0">Improvement queue</span>
-        <span class="badge badge-green">Clear</span>
-      </div>
-      <a href="https://nccprod.service-now.com/now/nav/ui/classic/params/target/sc_task_list.do%3Fsysparm_query%3Dsys_class_name%253Dsc_task%255Eactive%253Dtrue%255Eservice_offering%253D6c3dd7a18704c2983cd3628f8bbb3533%255Eshort_descriptionLIKEImprovement%2520Suggestion" target="_blank">
-        <div style="font-size:13px;color:var(--text2);padding:4px 2px">No new improvement suggestions.</div>
-      </a>
-    </div>
-
-    <!-- TickTick -->
-    <div class="card">
-      <div class="card-header">
-        <span class="section-label">TickTick</span>
-        <span class="badge badge-orange">1 overdue · 1 today · 123 inbox</span>
-      </div>
-
-      <div class="tt-section-label overdue">Overdue</div>
-      <a href="https://ticktick.com/webapp/#q/today/tasks" target="_blank">
-        <div class="tt-item">
-          <div class="tt-circle overdue"></div>
-          <div>
-            <div class="tt-text">Flytta möten se Mathias svar, månd mötet och kanske något mer?</div>
-            <div class="tt-meta danger">Due Mar 11</div>
-          </div>
-        </div>
-      </a>
-
-      <div class="tt-section-label today">Today</div>
-      <a href="https://ticktick.com/webapp/#q/today/tasks" target="_blank">
-        <div class="tt-item">
-          <div class="tt-circle"></div>
-          <div><div class="tt-text">Gaming med fillä</div><div class="tt-meta">19:00</div></div>
-        </div>
-      </a>
-
-      <div class="tt-section-label inbox">Top inbox (ncc)</div>
-      <a href="https://ticktick.com/webapp/#p/inbox/tasks" target="_blank">
-        <div class="tt-item"><div class="tt-circle"></div><div class="tt-text">Fyll i form för CGI onboarding arkivering</div></div>
-      </a>
-      <a href="https://ticktick.com/webapp/#p/inbox/tasks" target="_blank">
-        <div class="tt-item"><div class="tt-circle"></div><div class="tt-text">WORKSHOP — BA lista sina 3–10 viktigaste processer i NCC Field</div></div>
-      </a>
-      <a href="https://ticktick.com/webapp/#p/inbox/tasks" target="_blank">
-        <div class="tt-item"><div class="tt-circle"></div><div class="tt-text">Informera om bulk changes som inte kommer till SuperUsers</div></div>
-      </a>
-      <a href="https://ticktick.com/webapp/#p/inbox/tasks" target="_blank">
-        <div class="tt-item"><div class="tt-circle"></div><div class="tt-text">Skapa change för QLM test installation inför uppgradering</div></div>
-      </a>
-      <a href="https://ticktick.com/webapp/#p/inbox/tasks" target="_blank">
-        <div class="tt-item"><div class="tt-circle"></div><div class="tt-text">Kolla Naviq/NCC Field underspend — se teams chatt Linda 11 mar</div></div>
-      </a>
-    </div>
-
-    <!-- Personal calendar 7-day -->
-    <div class="card">
-      <div class="card-header">
-        <span class="section-label">Personal calendar — 7 days</span>
-        <a href="https://calendar.google.com/calendar/u/0/r/week" target="_blank" style="font-size:11px;color:var(--accent)">Open ↗</a>
-      </div>
-
-      <div class="wk-day">
-        <div class="wk-header"><span class="wk-date-label today">Fri 13 Mar</span></div>
-        <div class="wk-events-col">
-          <a href="https://calendar.google.com/calendar/u/0/r/day/2026/3/13" target="_blank">
-            <div class="wk-event"><span class="wk-event-time">19:00–23:00</span>Gaming med fillä</div>
-          </a>
-        </div>
-      </div>
-      <hr class="wk-divider">
-
-      <div class="wk-day">
-        <div class="wk-header"><span class="wk-date-label">Sat 14 Mar</span></div>
-        <div class="wk-empty">Nothing scheduled</div>
-      </div>
-      <hr class="wk-divider">
-
-      <div class="wk-day">
-        <div class="wk-header"><span class="wk-date-label">Sun 15 Mar</span></div>
-        <div class="wk-empty">Nothing scheduled</div>
-      </div>
-      <hr class="wk-divider">
-
-      <div class="wk-day">
-        <div class="wk-header"><span class="wk-date-label">Mon 16 Mar</span></div>
-        <div class="wk-events-col">
-          <a href="https://calendar.google.com/calendar/u/0/r/day/2026/3/16" target="_blank">
-            <div class="wk-event"><span class="wk-event-time">15:30–16:30</span>Deklarera k10 eller aktief… (recurring)</div>
-          </a>
-        </div>
-      </div>
-      <hr class="wk-divider">
-
-      <div class="wk-day">
-        <div class="wk-header"><span class="wk-date-label">Tue 17 Mar</span></div>
-        <div class="wk-events-col">
-          <a href="https://calendar.google.com/calendar/u/0/r/day/2026/3/17" target="_blank">
-            <div class="wk-event"><span class="wk-event-time">15:30–16:30</span>Deklarera k10 eller aktief… (recurring)</div>
-          </a>
-        </div>
-      </div>
-      <hr class="wk-divider">
-
-      <div class="wk-day">
-        <div class="wk-header"><span class="wk-date-label">Wed 18 Mar</span></div>
-        <div class="wk-events-col">
-          <a href="https://calendar.google.com/calendar/u/0/r/day/2026/3/18" target="_blank">
-            <div class="wk-event"><span class="wk-event-time">15:30–16:30</span>Deklarera k10 eller aktief… (recurring)</div>
-          </a>
-        </div>
-      </div>
-      <hr class="wk-divider">
-
-      <div class="wk-day">
-        <div class="wk-header"><span class="wk-date-label">Thu 19 Mar</span></div>
-        <div class="wk-events-col">
-          <a href="https://calendar.google.com/calendar/u/0/r/day/2026/3/19" target="_blank">
-            <div class="wk-event"><span class="wk-event-time">15:30–16:30</span>Deklarera k10 eller aktief… (recurring)</div>
-          </a>
-        </div>
-      </div>
-      <hr class="wk-divider">
-
-      <div class="wk-day">
-        <div class="wk-header"><span class="wk-date-label">Fri 20 Mar</span></div>
-        <div class="wk-events-col">
-          <a href="https://calendar.google.com/calendar/u/0/r/day/2026/3/20" target="_blank">
-            <div class="wk-event"><span class="wk-event-time">15:00 →</span>Airbnb Berlin Trip — Luxury Penthouse w/ Rooftop Terrace & Sauna (Fri–Sun)</div>
-          </a>
-          <a href="https://calendar.google.com/calendar/u/0/r/day/2026/3/20" target="_blank">
-            <div class="wk-event"><span class="wk-event-time">15:30–16:30</span>Deklarera k10 eller aktief… (recurring)</div>
-          </a>
-        </div>
-      </div>
-
-    </div><!-- end personal cal card -->
-
-  </div><!-- end right col -->
-</div><!-- end grid2 -->
-
-<div style="text-align:center;margin-top:32px;font-size:11px;color:var(--text3)">
-  Generated by Claude · <a href="https://claude.ai" target="_blank" style="color:var(--text3)">claude.ai</a>
-</div>
-
-</div><!-- end main-content -->
 
 <script>
-  const ALLOWED_EMAIL = 'christoffer.stromgren@gmail.com';
-  const SESSION_KEY = 'mb_authed';
+const ALLOWED_EMAIL = 'christoffer.stromgren@gmail.com';
+const SESSION_KEY = 'mb_authed';
+const GIST_ID = 'c8456a17e1a496f4d245f0aa07c12901';
+const GIST_RAW = `https://gist.githubusercontent.com/strmgrn/${GIST_ID}/raw/briefing.json`;
 
-  function handleCredentialResponse(response) {
-    const payload = JSON.parse(atob(response.credential.split('.')[1]));
-    if (payload.email === ALLOWED_EMAIL) {
-      sessionStorage.setItem(SESSION_KEY, '1');
-      showDashboard();
-    } else {
-      document.getElementById('auth-signin').style.display = 'none';
-      document.getElementById('auth-denied').style.display = 'block';
-    }
-  }
-
-  function showDashboard() {
-    document.getElementById('auth-overlay').style.display = 'none';
-    document.getElementById('main-content').style.display = 'block';
-  }
-
-  function signOut() {
-    sessionStorage.removeItem(SESSION_KEY);
-    document.getElementById('auth-denied').style.display = 'none';
-    document.getElementById('auth-signin').style.display = 'block';
-    google.accounts.id.disableAutoSelect();
-  }
-
-  // Skip login if already authed this session
-  if (sessionStorage.getItem(SESSION_KEY)) {
+function handleCredentialResponse(response) {
+  const payload = JSON.parse(atob(response.credential.split('.')[1]));
+  if (payload.email === ALLOWED_EMAIL) {
+    sessionStorage.setItem(SESSION_KEY, '1');
     showDashboard();
+  } else {
+    document.getElementById('auth-signin').style.display = 'none';
+    document.getElementById('auth-denied').style.display = 'block';
   }
-</script>
+}
+function showDashboard() {
+  document.getElementById('auth-overlay').style.display = 'none';
+  document.getElementById('main-content').style.display = 'block';
+  loadData();
+}
+function signOut() {
+  sessionStorage.removeItem(SESSION_KEY);
+  document.getElementById('auth-denied').style.display = 'none';
+  document.getElementById('auth-signin').style.display = 'block';
+  google.accounts.id.disableAutoSelect();
+}
+if (sessionStorage.getItem(SESSION_KEY)) showDashboard();
 
+async function loadData() {
+  document.getElementById('dashboard-body').innerHTML = '<div id="loading-state">Loading briefing data…</div>';
+  document.getElementById('error-state').style.display = 'none';
+  document.getElementById('stale-banner').style.display = 'none';
+  try {
+    const res = await fetch(GIST_RAW + '?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const d = await res.json();
+    renderDashboard(d);
+  } catch(e) {
+    document.getElementById('dashboard-body').innerHTML = '';
+    document.getElementById('error-state').style.display = 'block';
+  }
+}
+
+function renderDashboard(d) {
+  const now = new Date();
+  document.getElementById('hdr-date').textContent = now.toLocaleDateString('en-SE', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  if (d.generated && d.generated !== 'never') {
+    const gen = new Date(d.generated);
+    document.getElementById('hdr-generated').textContent = 'Updated ' + gen.toLocaleTimeString('sv-SE', {hour:'2-digit', minute:'2-digit'});
+    if ((now - gen) / 36e5 > 20) document.getElementById('stale-banner').style.display = 'block';
+  } else {
+    document.getElementById('hdr-generated').textContent = 'No data yet — say "god morgon" to Claude';
+  }
+
+  let h = '';
+
+  // ACTIONS
+  const actions = d.actions || [];
+  h += `<div class="action-card"><div class="section-label">Action required</div>`;
+  if (!actions.length) h += `<div class="no-actions">No actions required — clear!</div>`;
+  actions.forEach(a => h += `<div class="action-item"><div class="action-dot"></div><div><a href="${a.url||'#'}" target="_blank"><div class="action-text">${x(a.text)}</div><div class="action-meta">${x(a.meta)}</div></a></div></div>`);
+  h += `</div>`;
+
+  // EMAILS
+  const em = d.emails || {};
+  h += `<div class="grid3" style="margin-bottom:10px">`;
+  h += emailCard('Gmail personal', em.gmail||[], 'https://mail.google.com/mail/u/0/#inbox');
+  h += emailCard('Power Branch', em.powerbranch||[], 'https://mail.google.com/mail/u/1/#inbox');
+  h += emailCard('NCC Outlook', em.ncc||[], 'https://outlook.cloud.microsoft/mail/inbox');
+  h += `</div>`;
+
+  // 2-COL
+  h += `<div class="grid2">`;
+
+  // CALENDAR
+  const cal = d.calendar || [];
+  h += `<div class="card"><div class="card-header"><span class="section-label">NCC Calendar — today</span><span class="badge badge-blue">${cal.length} event${cal.length!==1?'s':''}</span></div>
+  <div class="legend"><div class="legend-item"><div class="cal-dot dot-ncc"></div>NCC</div><div class="legend-item"><div class="cal-dot dot-priv"></div>Personal</div></div>`;
+  if (!cal.length) h += `<div class="empty-row">No events today</div>`;
+  cal.forEach(e => h += `<a href="${e.url||'https://outlook.cloud.microsoft/calendar/view/day'}" target="_blank"><div class="cal-item"><div class="cal-dot ${e.type==='personal'?'dot-priv':'dot-ncc'}"></div><div><div class="cal-name${e.cancelled?' cancelled':''}">${x(e.title)}${e.teams?'<span class="teams-badge">Teams</span>':''}</div><div class="cal-time">${x(e.time)}${e.organiser?' · '+x(e.organiser):''}</div></div></div></a>`);
+  h += `</div>`;
+
+  // RIGHT COL
+  h += `<div class="right-col">`;
+
+  // SERVICENOW
+  const sn = d.servicenow || {};
+  const hi = sn.high||0, es = sn.escalated||0, sl = sn.sla_critical||0;
+  const osla = sn.open_sla||[], impq = sn.improvement_queue||[];
+  h += `<div class="card"><div class="card-header"><span class="section-label">ServiceNow</span>
+    <a href="https://nccprod.service-now.com/now/nav/ui/classic/params/target/%24pa_dashboard.do%3Fsysparm_dashboard%3D9cb3250ddba870502b985ca5f396193b" target="_blank" style="font-size:11px;color:var(--accent)">Open dashboard ↗</a></div>
+    <div class="metrics">
+      <div class="metric"><div class="metric-label">High priority</div><div class="metric-value ${hi>0?'red':'green'}">${hi}</div></div>
+      <div class="metric"><div class="metric-label">Escalated</div><div class="metric-value ${es>0?'red':'green'}">${es}</div></div>
+      <div class="metric"><div class="metric-label">SLA &lt;6h</div><div class="metric-value ${sl>0?'orange':'green'}">${sl}</div></div>
+    </div>
+    <div class="card-header" style="margin-bottom:6px"><span class="section-label" style="margin-bottom:0">Open SLA</span>
+    <span class="badge ${osla.length?'badge-orange':'badge-green'}">${osla.length?osla.length+' ticket'+(osla.length>1?'s':''):'Clear'}</span></div>`;
+  if (!osla.length) h += `<div class="empty-row">No open SLA tickets</div>`;
+  osla.forEach(t => {
+    const p = t.elapsed_pct||0, fc = p>80?'danger':p>50?'warn':'';
+    h += `<a href="${t.url||'#'}" target="_blank"><div class="row" style="flex-direction:column;gap:4px">
+      <span style="font-size:12px;font-weight:600;color:var(--accent)">${x(t.number)}</span>
+      <span class="row-label">${x(t.title)}</span>
+      <span style="font-size:11px;color:var(--text2)">${x(t.state)} · ${x(t.assignee)}</span>
+      <div class="sla-bar-bg"><div class="sla-bar-fill ${fc}" style="width:${p}%"></div></div>
+      <span style="font-size:11px;color:var(--text2)">${p}% elapsed · ${x(t.time_left)} left</span>
+    </div></a>`;
+  });
+  h += `<div class="card-header" style="margin-top:12px;margin-bottom:4px"><span class="section-label" style="margin-bottom:0">Improvement queue</span>
+    <span class="badge ${impq.length?'badge-orange':'badge-green'}">${impq.length?impq.length+' new':'Clear'}</span></div>`;
+  if (!impq.length) h += `<div class="empty-row">No new improvement suggestions.</div>`;
+  impq.forEach(t => h += `<a href="${t.url||'#'}" target="_blank"><div class="row"><span class="row-label">${x(t.title)}</span><span class="row-meta">${x(t.meta)}</span></div></a>`);
+  h += `</div>`;
+
+  // TICKTICK
+  const tt = d.ticktick||{}, ov=tt.overdue||[], td=tt.today||[], ib=tt.inbox||[];
+  h += `<div class="card"><div class="card-header"><span class="section-label">TickTick</span>
+    <span class="badge ${ov.length?'badge-red':'badge-gray'}">${ov.length} overdue · ${td.length} today · ${ib.length} inbox</span></div>`;
+  if (ov.length) { h += `<div class="tt-section-label overdue">Overdue</div>`; ov.forEach(t => h += `<a href="https://ticktick.com/webapp/#q/today/tasks" target="_blank"><div class="tt-item"><div class="tt-circle overdue"></div><div><div class="tt-text">${x(t.text)}</div><div class="tt-meta danger">${x(t.due)}</div></div></div></a>`); }
+  if (td.length) { h += `<div class="tt-section-label today">Today</div>`; td.forEach(t => h += `<a href="https://ticktick.com/webapp/#q/today/tasks" target="_blank"><div class="tt-item"><div class="tt-circle"></div><div><div class="tt-text">${x(t.text)}</div><div class="tt-meta">${x(t.meta||'')}</div></div></div></a>`); }
+  if (ib.length) { h += `<div class="tt-section-label inbox">Top inbox (ncc)</div>`; ib.forEach(t => h += `<a href="https://ticktick.com/webapp/#p/inbox/tasks" target="_blank"><div class="tt-item"><div class="tt-circle"></div><div class="tt-text">${x(t.text)}</div></div></a>`); }
+  if (!ov.length && !td.length && !ib.length) h += `<div class="empty-row">No tasks</div>`;
+  h += `</div>`;
+
+  // PERSONAL CAL 7-DAY
+  const pc = d.personal_cal||[];
+  h += `<div class="card"><div class="card-header"><span class="section-label">Personal calendar — 7 days</span>
+    <a href="https://calendar.google.com/calendar/u/0/r/week" target="_blank" style="font-size:11px;color:var(--accent)">Open ↗</a></div>`;
+  if (!pc.length) h += `<div class="empty-row">No events this week</div>`;
+  pc.forEach((day, i) => {
+    if (i>0) h += `<hr class="wk-divider">`;
+    h += `<div class="wk-day"><div class="wk-header"><span class="wk-date-label${day.today?' today':''}">${x(day.label)}</span></div>`;
+    if (!day.events||!day.events.length) { h += `<div class="wk-empty">Nothing scheduled</div>`; }
+    else { h += `<div class="wk-events-col">`; day.events.forEach(e => h += `<a href="${e.url||'https://calendar.google.com/calendar/u/0/r/week'}" target="_blank"><div class="wk-event"><span class="wk-event-time">${x(e.time)}</span>${x(e.title)}</div></a>`); h += `</div>`; }
+    h += `</div>`;
+  });
+  h += `</div>`;
+
+  h += `</div></div>`; // right-col, grid2
+  h += `<div style="text-align:center;margin-top:32px;font-size:11px;color:var(--text3)">Morning Briefing · <a href="https://claude.ai" target="_blank" style="color:var(--text3)">claude.ai</a></div>`;
+  document.getElementById('dashboard-body').innerHTML = h;
+}
+
+function emailCard(title, items, fallbackUrl) {
+  const hasBad = items.some(m => m.urgent);
+  let h = `<div class="card"><div class="card-header"><span class="section-label">${title}</span>
+    <span class="badge ${items.length?(hasBad?'badge-red':'badge-orange'):'badge-green'}">${items.length?items.length+' item'+(items.length>1?'s':''):'Clear'}</span></div>`;
+  if (!items.length) h += `<div class="empty-row">No actionable emails</div>`;
+  items.forEach(m => h += `<a href="${m.url||fallbackUrl}" target="_blank"><div class="row"><span class="row-label${m.bold?' bold':''}">${x(m.subject)}</span><span class="row-meta${m.urgent?' danger':''}">${x(m.meta)}</span></div></a>`);
+  return h + `</div>`;
+}
+
+function x(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
 </body>
 </html>
